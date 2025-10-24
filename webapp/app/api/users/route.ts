@@ -44,3 +44,40 @@ export async function GET(request: Request) {
     await client.close();
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const username = searchParams.get("username");
+
+    if (!username) {
+      return NextResponse.json(
+        { error: "Username parameter is required" },
+        { status: 400 }
+      );
+    }
+
+    await client.connect();
+    const database = client.db("me-dev");
+    const users = database.collection<User>("users");
+
+    const deleteResult = await users.deleteOne({ username });
+
+    if (deleteResult.deletedCount === 0) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(
+      { message: "User deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  } finally {
+    await client.close();
+  }
+}

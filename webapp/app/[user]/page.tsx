@@ -1,5 +1,6 @@
 import SocialMediaList from "../../components/SocialMediaList";
 import Icon from "react-simple-icons";
+import { User } from "../types/models";
 
 export default async function UserPage({
   params,
@@ -7,32 +8,25 @@ export default async function UserPage({
   params: Promise<{ user: string }>;
 }) {
   const { user } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const userDataRequest = await fetch(`${baseUrl}/api/users?username=${user}`);
+  if (!userDataRequest.ok) {
+    throw new Error("Failed to fetch user data");
+  }
+  const userInfo: User = await userDataRequest.json();
 
-  const socialMediaItems = [
-    {
-      name: "GitHub",
-      url: "https://github.com",
-      icon: <Icon name="github" size={24} />,
-    },
-    {
-      name: "LinkedIn",
-      url: "https://linkedin.com",
-      icon: <Icon name="linkedin" size={24} />,
-    },
-    {
-      name: "Twitter",
-      url: "https://twitter.com",
-      icon: <Icon name="twitter" size={24} />,
-    },
-  ];
-
+  const socialMediaItems = userInfo.social.map((item) => ({
+    name: item.name,
+    url: item.url,
+    icon: <Icon name={item.name} />,
+  }));
   return (
     <div className="min-h-screen bg-base-100" data-theme="cupcake">
       <div className="hero py-6 sm:py-8 md:py-12">
         <div className="hero-content flex-col gap-4 sm:gap-6 px-4">
           <img
             className="rounded-full w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40"
-            src="https://avatar.iran.liara.run/public"
+            src={userInfo.avatar}
             alt={`Avatar de ${user}`}
           />
           <div className="text-center">

@@ -15,7 +15,7 @@ export type User = {
   name: string;
   description: string;
   contact_email: string;
-  avatar_url: string;
-  social_media: SocialMedia[];
+  avatar: string;
+  social: SocialMedia[];
   projects: Project[];
 };
