@@ -31,10 +31,10 @@ export default async function UserPage({
           />
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
-              {user}
+              {userInfo.name}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-base-content/70">
-              Você está vendo o perfil de @{user}
+              {userInfo.description}
             </p>
           </div>
         </div>
