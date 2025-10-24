@@ -51,32 +51,39 @@ export default async function UserPage({
         <h2 className="text-2xl sm:text-3xl md:text-4xl text-center font-bold">
           Projetos
         </h2>
-        <div className="w-full max-w-sm sm:max-w-md card">
-          <figure>
-            <img src="https://placehold.co/400x200/png" alt="Projeto 1" />
-          </figure>
-          <div className="card-body">
-            <h3 className="card-title">
-              Projeto 1
-              {[
-                { label: "Python" },
-                { label: "NextJS" },
-                { label: "TypeScript" },
-              ].map((badge, index) => {
-                const colors = [
-                  "badge-primary",
-                  "badge-secondary",
-                  "badge-accent",
-                ];
-                return (
-                  <div key={index} className={`badge ${colors[index]}`}>
-                    {badge.label}
-                  </div>
-                );
-              })}
-            </h3>
-            <p>Descrição do Projeto 1</p>
-          </div>
+        <div
+          className={` ${
+            userInfo.projects.length === 1 ? "justify-items-center" : "grid"
+          } grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl`}
+        >
+          {userInfo.projects.map((project) => (
+            <div key={project.name} className="card">
+              <figure>
+                <img src={project.image} alt={project.name} />
+              </figure>
+              <div className="card-body">
+                <h3 className="card-title">{project.name}</h3>
+                <p>{project.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {project.stack.map((tag, index) => {
+                    const colors = [
+                      "badge-primary",
+                      "badge-secondary",
+                      "badge-accent",
+                    ];
+                    return (
+                      <div
+                        key={index}
+                        className={`badge ${colors[index % colors.length]}`}
+                      >
+                        {tag}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
