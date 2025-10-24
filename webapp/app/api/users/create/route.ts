@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import type { User } from "@/app/types/models";
+import { NextResponse } from "next/server";
 
 const uri = process.env.MONGODB_URI || "";
 
@@ -12,25 +12,33 @@ const client = new MongoClient(uri, {
   },
 });
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<User | { error: string }>
-) {
-  const { method } = req;
-
-  if (method !== "POST") {
-    res.setHeader("Allow", ["POST"]);
-    return res.status(405).json({ error: `Method ${method} Not Allowed` });
-  }
-
+export async function POST(request: Request) {
   try {
+    const newUser: User = await request.json();
+    console.log("Received new user data:", newUser);
+
     await client.connect();
     const database = client.db("me-dev");
     const users = database.collection<User>("users");
 
-    const newUser: User = req.body;
     const existingUser = await users.findOne({ username: newUser.username });
 
     if (existingUser) {
-      return res.status(409).json({ error: "Username already exists" });
+      return NextResponse.json(
+        { error: "Username already exists" },
+        { status: 409 }
+      );
     }
+
+    await users.insertOne(newUser);
+    return NextResponse.json(newUser, { status: 201 });
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  } finally {
+    await client.close();
+  }
+}

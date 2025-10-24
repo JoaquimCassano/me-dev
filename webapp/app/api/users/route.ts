@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import type { User } from "@/app/types/models";
 
@@ -12,32 +12,34 @@ const client = new MongoClient(uri, {
   },
 });
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<User | { error: string }>
-) {
-  const { method } = req;
-
-  if (method !== "GET") {
-    res.setHeader("Allow", ["GET"]);
-    return res.status(405).json({ error: `Method ${method} Not Allowed` });
-  }
-
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const username = searchParams.get("username");
+
+    if (!username) {
+      return NextResponse.json(
+        { error: "Username parameter is required" },
+        { status: 400 }
+      );
+    }
+
     await client.connect();
     const database = client.db("me-dev");
     const users = database.collection<User>("users");
 
-    const username = req.query.username as string;
     const user = await users.findOne({ username });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    return res.status(200).json(user);
+    return NextResponse.json(user, { status: 200 });
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   } finally {
     await client.close();
   }
