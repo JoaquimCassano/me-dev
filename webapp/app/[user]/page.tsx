@@ -1,6 +1,7 @@
 import SocialMediaList from "../../components/SocialMediaList";
 import Icon from "react-simple-icons";
 import { User } from "../types/models";
+import { notFound } from "next/navigation";
 
 export default async function UserPage({
   params,
@@ -11,7 +12,7 @@ export default async function UserPage({
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const userDataRequest = await fetch(`${baseUrl}/api/users?username=${user}`);
   if (!userDataRequest.ok) {
-    throw new Error("Failed to fetch user data");
+    notFound();
   }
   const userInfo: User = await userDataRequest.json();
 
