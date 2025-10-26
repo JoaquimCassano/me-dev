@@ -12,15 +12,9 @@ export default function MainPage() {
             src="/screenshot.png"
           />
           <div>
-            <div className="min-h-20">
-              <TypingAnimation
-                className="text-5xl font-bold"
-                cursorStyle="block"
-                typeSpeed={50}
-              >
-                Apresente-se ao mundo
-              </TypingAnimation>
-            </div>
+            <TypingAnimation className="text-5xl font-bold" cursorStyle="block">
+              Apresente-se ao mundo
+            </TypingAnimation>
             <p className="py-6">
               Tenha um portifólio profissional em poucos minutos.{" "}
             </p>
