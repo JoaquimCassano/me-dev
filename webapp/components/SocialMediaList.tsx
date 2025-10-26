@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ReactElement } from "react";
 
 interface SocialMediaItem {
@@ -16,7 +15,7 @@ export default function SocialMediaList({ items }: SocialMediaListProps) {
     <ul className="menu bg-base-100 rounded-box w-full shadow-md divide-y divide-base-200 border border-base-200">
       {items.map((item) => (
         <li key={item.name} className="p-0">
-          <Link
+          <a
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
@@ -28,7 +27,7 @@ export default function SocialMediaList({ items }: SocialMediaListProps) {
             <span className="font-medium text-sm sm:text-base">
               {item.name}
             </span>
-          </Link>
+          </a>
         </li>
       ))}
     </ul>

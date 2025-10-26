@@ -13,7 +13,8 @@ export default function UserNotFound() {
               Usuário não encontrado
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-base-content/70 mb-8 max-w-md">
-              Desculpe, o usuário que você está procurando não existe ou foi removido.
+              Desculpe, o usuário que você está procurando não existe ou foi
+              removido.
             </p>
           </div>
           <div className="flex gap-4 flex-col sm:flex-row justify-center">
