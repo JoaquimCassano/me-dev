@@ -13,7 +13,11 @@ export default function MainPage() {
           />
           <div>
             <div className="min-h-20">
-              <TypingAnimation className="text-5xl font-bold" cursorStyle="block">
+              <TypingAnimation
+                className="text-5xl font-bold"
+                cursorStyle="block"
+                typeSpeed={50}
+              >
                 Apresente-se ao mundo
               </TypingAnimation>
             </div>
