@@ -8,6 +8,7 @@ import { TypingAnimation } from "@/components/ui/typing-animation";
 export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -34,7 +35,7 @@ export default function SignupPage() {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ email, password, name, username }),
       });
 
       const data = await response.json();
@@ -103,7 +104,22 @@ export default function SignupPage() {
                   required
                 />
               </div>
-
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold mr-2">
+                    Username
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Seu nome de usuário"
+                  className="input input-bordered w-3/4"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text font-semibold mr-2">Email</span>
