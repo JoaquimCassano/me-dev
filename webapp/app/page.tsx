@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import Iphone15Pro from "@/components/ui/shadcn-io/iphone-15-pro";
 import { TypingAnimation } from "@/components/ui/typing-animation";
 import { FaRocket, FaCode, FaDollarSign } from "react-icons/fa";
@@ -50,9 +51,20 @@ export default function MainPage() {
             <p className="py-4 sm:py-6 text-sm sm:text-base">
               Tenha um portifólio profissional em poucos minutos.{" "}
             </p>
-            <button className="btn btn-primary justify-center w-full sm:w-auto">
-              Crie seu perfil agora
-            </button>
+            <div className="flex gap-4 flex-col sm:flex-row">
+              <Link
+                href="/signup"
+                className="btn btn-primary justify-center w-full sm:w-auto"
+              >
+                Crie seu perfil agora
+              </Link>
+              <Link
+                href="/login"
+                className="btn btn-outline justify-center w-full sm:w-auto"
+              >
+                Fazer Login
+              </Link>
+            </div>
           </div>
         </div>
       </div>
