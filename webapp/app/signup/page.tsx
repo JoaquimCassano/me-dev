@@ -55,11 +55,11 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-base-200" data-theme="cupcake">
       <div className="hero min-h-screen bg-base-200">
-        <div className="hero-content flex-col w-full max-w-md">
+        <div className="hero-content flex-col w-full  max-w-md">
           <div className="text-center mb-8">
             <TypingAnimation
               className="text-3xl md:text-4xl font-bold mb-2"
-              cursorStyle="block"
+              cursorStyle="line"
             >
               Criar Conta
             </TypingAnimation>
@@ -68,8 +68,8 @@ export default function SignupPage() {
             </p>
           </div>
 
-          <div className="card bg-base-100 shadow-xl w-full">
-            <form className="card-body gap-4" onSubmit={handleSubmit}>
+          <div className="card bg-base-100 shadow-xl w-full ">
+            <form className="card-body gap-4 " onSubmit={handleSubmit}>
               {error && (
                 <div role="alert" className="alert alert-error">
                   <svg
@@ -91,12 +91,12 @@ export default function SignupPage() {
 
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text font-semibold">Nome</span>
+                  <span className="label-text font-semibold mr-2">Nome</span>
                 </label>
                 <input
                   type="text"
                   placeholder="Seu nome completo"
-                  className="input input-bordered"
+                  className="input input-bordered w-3/4"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={isLoading}
@@ -106,12 +106,12 @@ export default function SignupPage() {
 
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text font-semibold">Email</span>
+                  <span className="label-text font-semibold mr-2">Email</span>
                 </label>
                 <input
                   type="email"
                   placeholder="seu@email.com"
-                  className="input input-bordered"
+                  className="input input-bordered w-3/4"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
@@ -121,12 +121,12 @@ export default function SignupPage() {
 
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text font-semibold">Senha</span>
+                  <span className="label-text font-semibold mr-2">Senha</span>
                 </label>
                 <input
                   type="password"
                   placeholder="Mínimo 6 caracteres"
-                  className="input input-bordered"
+                  className="input input-bordered w-3/4"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
@@ -137,14 +137,14 @@ export default function SignupPage() {
 
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text font-semibold">
+                  <span className="label-text font-semibold mr-2">
                     Confirmar Senha
                   </span>
                 </label>
                 <input
                   type="password"
                   placeholder="Digite a senha novamente"
-                  className="input input-bordered"
+                  className="input input-bordered w-3/4"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={isLoading}
