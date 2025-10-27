@@ -6,23 +6,25 @@ interface SignupRequest {
   email: string;
   password: string;
   name: string;
+  username: string;
 }
 
 interface AuthUser {
   email: string;
   password: string;
   name: string;
+  username: string;
   createdAt: Date;
 }
 
 export async function POST(request: Request) {
   try {
     const body: SignupRequest = await request.json();
-    const { email, password, name } = body;
+    const { email, password, name, username } = body;
 
-    if (!email || !password || !name) {
+    if (!email || !password || !name || !username) {
       return NextResponse.json(
-        { error: "Email, senha e nome são obrigatórios" },
+        { error: "Email, senha, nome e username são obrigatórios" },
         { status: 400 }
       );
     }
@@ -58,6 +60,7 @@ export async function POST(request: Request) {
       email,
       password: hashedPassword,
       name,
+      username,
       createdAt: new Date(),
     };
 
@@ -66,7 +69,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: "Usuário criado com sucesso",
-        user: { email, name },
+        user: { email, name, username },
       },
       { status: 201 }
     );

@@ -1,5 +1,6 @@
 import { auth, signOut } from "@/app/auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export const runtime = "nodejs";
 
@@ -14,7 +15,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-base-200" data-theme="cupcake">
       <div className="navbar bg-base-100 shadow-lg">
         <div className="flex-1">
-          <a className="btn btn-ghost normal-case text-xl">Seu Portfólio</a>
+          <a className="btn btn-ghost normal-case text-xl">Me-dev</a>
         </div>
         <div className="flex-none">
           <div className="dropdown dropdown-end">
@@ -32,7 +33,7 @@ export default async function DashboardPage() {
               className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <a>Perfil</a>
+                <Link href={`/${session.user?.name}`}>Perfil</Link>
               </li>
               <li>
                 <a>Configurações</a>
