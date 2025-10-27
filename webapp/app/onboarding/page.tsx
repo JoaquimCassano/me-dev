@@ -5,6 +5,47 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { completeOnboarding } from "./actions";
 
+type TextStep = {
+  title: string;
+  subtitle: string;
+  field: string;
+  type: "text";
+  placeholder: string;
+  value: string;
+  setValue: (value: string) => void;
+};
+
+type TextareaStep = {
+  title: string;
+  subtitle: string;
+  field: string;
+  type: "textarea";
+  placeholder: string;
+  value: string;
+  setValue: (value: string) => void;
+  maxLength?: number;
+};
+
+type ListStep = {
+  title: string;
+  subtitle: string;
+  field: string;
+  type: "list";
+  placeholder: string;
+  value: string[];
+  setValue: (value: string[]) => void;
+};
+
+type ImageUploadStep = {
+  title: string;
+  subtitle: string;
+  value: string;
+  setImageBase64: (value: string) => void;
+  type: "image";
+};
+
+type Step = TextStep | TextareaStep | ListStep | ImageUploadStep;
+
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -12,12 +53,13 @@ export default function OnboardingPage() {
   const [bio, setBio] = useState("");
   const [socialMedias, setSocialMedias] = useState([""]);
   const [skills, setSkills] = useState("");
+  const [imageBase64, setImageBase64] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const steps = [
+  const steps: Step[] = [
     {
       title: "Como quer ser conhecido?",
       subtitle: "Use seu nome social",
@@ -26,6 +68,13 @@ export default function OnboardingPage() {
       placeholder: "Ex: João Silva",
       value: fullName,
       setValue: setFullName,
+    },
+    {
+      title: "Envie uma foto sua",
+      subtitle: "Uma imagem que represente você",
+      type: "image",
+      value: imageBase64,
+      setValue: setImageBase64,
     },
     {
       title: "Fale um pouco sobre você",
@@ -200,96 +249,93 @@ export default function OnboardingPage() {
                   transition={{ duration: 0.3 }}
                 >
                   {(() => {
-                    switch (currentStep.type) {
-                      case "textarea":
-                        return (
-                          <textarea
-                            ref={textareaRef}
-                            className="textarea textarea-bordered w-full mb-6"
-                            placeholder={currentStep.placeholder}
-                            value={currentStep.value}
-                            onChange={(e) => {
-                              currentStep.setValue(e.target.value);
-                              setError("");
-                            }}
-                            disabled={isLoading}
-                            maxLength={currentStep.maxLength}
-                            rows={3}
-                          />
-                        );
-                      case "list":
-                        return (
-                          <>
-                            {currentStep.value.map(
-                              (item: string, idx: number) => (
-                                <div
-                                  key={idx}
-                                  className="flex items-center gap-2 mb-3"
-                                >
-                                  <input
-                                    type="text"
-                                    className="input input-bordered w-full"
-                                    placeholder={currentStep.placeholder}
-                                    value={item}
-                                    onChange={(e) => {
-                                      const updated = [...currentStep.value];
-                                      updated[idx] = e.target.value;
-                                      currentStep.setValue(updated);
-                                      setError("");
-                                    }}
-                                    disabled={isLoading}
-                                    required
-                                  />
-                                  <button
-                                    type="button"
-                                    className="btn btn-error btn-sm btn-square"
-                                    onClick={() => {
-                                      const updated = currentStep.value.filter(
-                                        (_, i) => i !== idx
-                                      );
-                                      currentStep.setValue(
-                                        updated.length ? updated : [""]
-                                      );
-                                    }}
-                                    disabled={
-                                      isLoading ||
-                                      currentStep.value.length === 1
-                                    }
-                                  >
-                                    ✕
-                                  </button>
-                                </div>
-                              )
-                            )}
-                            <button
-                              type="button"
-                              className="btn btn-secondary btn-sm mb-6"
-                              onClick={() =>
-                                currentStep.setValue([...currentStep.value, ""])
-                              }
-                              disabled={isLoading}
-                            >
-                              Adicionar rede social
-                            </button>
-                          </>
-                        );
-                      default:
-                        return (
-                          <input
-                            ref={inputRef}
-                            type={currentStep.type}
-                            className="input input-bordered w-full mb-6"
-                            placeholder={currentStep.placeholder}
-                            value={currentStep.value}
-                            onChange={(e) => {
-                              currentStep.setValue(e.target.value);
-                              setError("");
-                            }}
-                            disabled={isLoading}
-                            required
-                          />
-                        );
+                    if (currentStep.type === "textarea") {
+                      const step = currentStep as TextareaStep;
+                      return (
+                        <textarea
+                          ref={textareaRef}
+                          className="textarea textarea-bordered w-full mb-6"
+                          placeholder={step.placeholder}
+                          value={step.value}
+                          onChange={(e) => {
+                            step.setValue(e.target.value);
+                            setError("");
+                          }}
+                          disabled={isLoading}
+                          maxLength={step.maxLength}
+                          rows={3}
+                        />
+                      );
                     }
+
+                    if (currentStep.type === "list") {
+                      const step = currentStep as ListStep;
+                      return (
+                        <>
+                          {step.value.map((item: string, idx: number) => (
+                            <div
+                              key={idx}
+                              className="flex items-center gap-2 mb-3"
+                            >
+                              <input
+                                type="text"
+                                className="input input-bordered w-full"
+                                placeholder={step.placeholder}
+                                value={item}
+                                onChange={(e) => {
+                                  const updated = [...step.value];
+                                  updated[idx] = e.target.value;
+                                  step.setValue(updated);
+                                  setError("");
+                                }}
+                                disabled={isLoading}
+                                required
+                              />
+                              <button
+                                type="button"
+                                className="btn btn-error btn-sm btn-square"
+                                onClick={() => {
+                                  const updated = step.value.filter(
+                                    (_: string, i: number) => i !== idx
+                                  );
+                                  step.setValue(
+                                    updated.length ? updated : [""]
+                                  );
+                                }}
+                                disabled={isLoading || step.value.length === 1}
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            className="btn btn-secondary btn-sm mb-6"
+                            onClick={() => step.setValue([...step.value, ""])}
+                            disabled={isLoading}
+                          >
+                            Adicionar rede social
+                          </button>
+                        </>
+                      );
+                    }
+
+                    const step = currentStep as TextStep;
+                    return (
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        className="input input-bordered w-full mb-6"
+                        placeholder={step.placeholder}
+                        value={step.value}
+                        onChange={(e) => {
+                          step.setValue(e.target.value);
+                          setError("");
+                        }}
+                        disabled={isLoading}
+                        required
+                      />
+                    );
                   })()}
                 </motion.div>
               </AnimatePresence>
