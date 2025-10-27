@@ -10,7 +10,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [fullName, setFullName] = useState("");
   const [bio, setBio] = useState("");
-  const [portfolio, setPortfolio] = useState("");
+  const [socialMedias, setSocialMedias] = useState([""]);
   const [skills, setSkills] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -19,8 +19,8 @@ export default function OnboardingPage() {
 
   const steps = [
     {
-      title: "Qual é o seu nome completo?",
-      subtitle: "Vamos começar com o básico",
+      title: "Como quer ser conhecido?",
+      subtitle: "Use seu nome social",
       field: "fullName",
       type: "text",
       placeholder: "Ex: João Silva",
@@ -38,13 +38,13 @@ export default function OnboardingPage() {
       maxLength: 150,
     },
     {
-      title: "Link do seu portfólio",
-      subtitle: "Onde as pessoas podem ver seu trabalho",
-      field: "portfolio",
-      type: "url",
-      placeholder: "https://seu-portfolio.com",
-      value: portfolio,
-      setValue: setPortfolio,
+      title: "Redes sociais",
+      subtitle: "Onde as pessoas podem te conhecer melhor?",
+      field: "socialMedias",
+      type: "list",
+      placeholder: "https://x.com/seu-usuario",
+      value: socialMedias,
+      setValue: setSocialMedias,
     },
     {
       title: "Quais são suas principais habilidades?",
@@ -70,7 +70,14 @@ export default function OnboardingPage() {
   const handleNext = (e?: FormEvent) => {
     e?.preventDefault();
 
-    if (!currentStep.value.trim()) {
+    if (currentStep.type === "list" && currentStep.value.length === 0) {
+      setError("Este campo é obrigatório");
+      return;
+    }
+    if (
+      currentStep.type !== "list" &&
+      !(typeof currentStep.value === "string" && currentStep.value.trim())
+    ) {
       setError("Este campo é obrigatório");
       return;
     }
@@ -103,7 +110,7 @@ export default function OnboardingPage() {
     const result = await completeOnboarding({
       fullName,
       bio,
-      portfolio,
+      socialMedias,
       skills: skills.split(",").map((s) => s.trim()),
     });
 
@@ -192,35 +199,98 @@ export default function OnboardingPage() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {currentStep.type === "textarea" ? (
-                    <textarea
-                      ref={textareaRef}
-                      className="textarea textarea-bordered w-full mb-6"
-                      placeholder={currentStep.placeholder}
-                      value={currentStep.value}
-                      onChange={(e) => {
-                        currentStep.setValue(e.target.value);
-                        setError("");
-                      }}
-                      disabled={isLoading}
-                      maxLength={currentStep.maxLength}
-                      rows={3}
-                    />
-                  ) : (
-                    <input
-                      ref={inputRef}
-                      type={currentStep.type}
-                      className="input input-bordered w-full mb-6"
-                      placeholder={currentStep.placeholder}
-                      value={currentStep.value}
-                      onChange={(e) => {
-                        currentStep.setValue(e.target.value);
-                        setError("");
-                      }}
-                      disabled={isLoading}
-                      required
-                    />
-                  )}
+                  {(() => {
+                    switch (currentStep.type) {
+                      case "textarea":
+                        return (
+                          <textarea
+                            ref={textareaRef}
+                            className="textarea textarea-bordered w-full mb-6"
+                            placeholder={currentStep.placeholder}
+                            value={currentStep.value}
+                            onChange={(e) => {
+                              currentStep.setValue(e.target.value);
+                              setError("");
+                            }}
+                            disabled={isLoading}
+                            maxLength={currentStep.maxLength}
+                            rows={3}
+                          />
+                        );
+                      case "list":
+                        return (
+                          <>
+                            {currentStep.value.map(
+                              (item: string, idx: number) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-center gap-2 mb-3"
+                                >
+                                  <input
+                                    type="text"
+                                    className="input input-bordered w-full"
+                                    placeholder={currentStep.placeholder}
+                                    value={item}
+                                    onChange={(e) => {
+                                      const updated = [...currentStep.value];
+                                      updated[idx] = e.target.value;
+                                      currentStep.setValue(updated);
+                                      setError("");
+                                    }}
+                                    disabled={isLoading}
+                                    required
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-error btn-sm btn-square"
+                                    onClick={() => {
+                                      const updated = currentStep.value.filter(
+                                        (_, i) => i !== idx
+                                      );
+                                      currentStep.setValue(
+                                        updated.length ? updated : [""]
+                                      );
+                                    }}
+                                    disabled={
+                                      isLoading ||
+                                      currentStep.value.length === 1
+                                    }
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              )
+                            )}
+                            <button
+                              type="button"
+                              className="btn btn-secondary btn-sm mb-6"
+                              onClick={() =>
+                                currentStep.setValue([...currentStep.value, ""])
+                              }
+                              disabled={isLoading}
+                            >
+                              Adicionar rede social
+                            </button>
+                          </>
+                        );
+                      default:
+                        return (
+                          <input
+                            ref={inputRef}
+                            type={currentStep.type}
+                            className="input input-bordered w-full mb-6"
+                            placeholder={currentStep.placeholder}
+                            value={currentStep.value}
+                            onChange={(e) => {
+                              currentStep.setValue(e.target.value);
+                              setError("");
+                            }}
+                            disabled={isLoading}
+                            required
+                          />
+                        );
+                    }
+                  })()}
                 </motion.div>
               </AnimatePresence>
 
